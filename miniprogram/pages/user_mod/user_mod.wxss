@@ -1,0 +1,92 @@
+
+.container {  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  padding: 20rpx;  
+  background-color: #F8F8F8;  
+}  
+  
+.avatar-container {  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  margin-bottom: 20rpx;  
+}  
+  
+.avatar {  
+  width: 200rpx;  
+  height: 200rpx;  
+  border-radius: 50%;  
+}  
+  
+.change-avatar {  
+  margin-top: 10rpx;  
+  padding: 10rpx 20rpx;  
+  background-color: #F67879; /* 深粉红色 */  
+  color: #ffffff;  
+  border-radius: 4rpx;  
+}  
+  
+.form-container {  
+  width: 100%;  
+  max-width: 600rpx;  
+  height: 900rpx;
+}  
+  
+.form-group {  
+  display: flex;  
+  flex-direction: column;  
+  margin-bottom: 40rpx;  
+}  
+  
+.label {  
+  margin-bottom: 10rpx;  
+  color: #333333;  
+}  
+  
+.input {  
+  height: 40rpx;  
+  line-height: 40rpx;  
+  padding: 0 10rpx;  
+  border: 1rpx solid #cccccc;  
+  border-radius: 4rpx;  
+}  
+  
+.radio-group {  
+  display: flex;  
+  flex-wrap: wrap;  
+  margin-top: 13rpx;
+}  
+  
+.radio {  
+  margin-right: 20rpx;  
+  margin-bottom: 10rpx;  
+}  
+  
+.submit-btn {  
+  width: 100%;  
+  padding: 15rpx 0;  
+  background-color: #F67879; /* 深粉红色 */  
+  color: #ffffff;  
+  border-radius: 4rpx;  
+}
+
+ 
+.color3{
+  color: #333;
+}
+ 
+.color6{
+  color: #666;
+}
+ 
+.timeIcon{
+  color:#666;
+  font-size:18rpx;
+  margin-left: 5rpx;
+}
+.font30{
+  margin-bottom: 40rpx; 
+  margin-top: 40rpx;
+}

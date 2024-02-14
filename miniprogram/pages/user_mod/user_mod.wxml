@@ -1,0 +1,36 @@
+<view class="container">  
+  <view class="avatar-container">  
+    <button  open-type="chooseAvatar" bindchooseavatar="OnchooseAvatar">
+      <image class="avatar" src="{{userInfo.userAvatarUrl}}" mode="aspectFill" />  
+    </button>  
+  </view>  
+  <view class="form-container">  
+    <view class="form-group">  
+      <text class="label">昵称</text>  
+      <input class="input" type="nickname" placeholder="请输入昵称" value="{{userInfo.userNickname}}" bindinput="nicknameInput" />  
+    </view>  
+    <view class="form-group2" style="display: flex; align-items: center;">  
+      <input class="input" style="flex-basis: auto; min-width: 0; " type="number" placeholder="请点击按钮" value="{{userInfo.userPhoneInfo.phoneNumber}}" disabled/>   
+      <button class="submit-btn" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber" style="flex-shrink: 0; background-color: #F67879; margin-left: 5rpx; ">一键获取手机号</button>  
+    </view>
+
+    <picker mode="date" header-text="选择时间"  value="{{userInfo.birthday}}" bindchange="bindDateChange">
+  <view class="font30">
+    <text class="color3">您的生日：</text>
+    <text class="color6">{{userInfo.birthday}}</text>
+    <text class="timeIcon">▼</text>
+  </view>
+</picker>
+    <view class="form-group">  
+      <radio-group class="radio-group" bindchange="sexChange">  
+        <text class="label">性别：</text>  
+        <label class="radio" wx:for="{{sexOptions}}" wx:key="value">  
+          <text>{{item}}</text>
+          <radio value="{{item}}" checked="{{item === userInfo.sex}}"/>{{item.label}}  
+        </label>  
+      </radio-group>  
+    </view>  
+    <!-- 你可以根据需要添加其他字段，如地点、积分等 -->  
+    <button class="submit-btn" bindtap="submitForm">保存</button>  
+  </view>  
+</view>
