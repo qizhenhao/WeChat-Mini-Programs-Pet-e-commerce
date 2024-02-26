@@ -2,10 +2,8 @@
 <view class="user-options">
       <van-grid square column-num="3" gutter="{{ 10 }}">
         <van-grid-item bindtap="update_advertising"  text="添加广告照片（点击后上传要添加的照片，照片会在小程序首页显示）"  />
-        <van-grid-item icon="cart-o" link-type="navigateTo" url="/pages/cart/cart" text="购物车" />
-        <van-grid-item icon="location-o" url="/pages/address/my-address/my-address" text="收货地址" />
-        <van-grid-item icon="vip-card-o" url="/pages/level/level" text="等级" />
-        <van-grid-item icon="medal-o" url="/pages/points/points" text="积分" />
-        <van-grid-item icon="other-pay" url="/pages/about/about" text="关于" />
+        <van-grid-item icon="cart-o" link-type="navigateTo" url="/pages/product_mod/product_mod" text="商品管理" />
+        <van-grid-item icon="balance-list-o" link-type="navigateTo" url="/pages/root_order/root_order" text="订单管理" />
+        <van-grid-item icon="balance-list-o" link-type="navigateTo" url="/pages/root_distribution/root_distribution" text="设置配送费" />
       </van-grid>
 </view>

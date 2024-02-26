@@ -19,6 +19,44 @@ Page({
       camera: 'back',
       success(res) {
         console.log(res);
+        let newAdver = [];  
+        let promises = [];  
+          
+        for(let i=0; i<res.tempFiles.length; i++) {  
+          let promise = new Promise((resolve, reject) => {  
+            wx.cloud.uploadFile({  
+              cloudPath: 'advert'+i+res.tempFiles[i].tempFilePath.slice(-4),  
+              filePath: res.tempFiles[i].tempFilePath, // 文件路径  
+              success: res => {  
+                // get resource ID  
+                newAdver.push(res.fileID);  
+                resolve();  
+              },  
+              fail: err => {  
+                // handle error  
+                reject(err);  
+              }  
+            })  
+          });  
+          promises.push(promise);  
+        }  
+        Promise.all(promises).then(() => {  
+          console.log(newAdver); 
+          wx.cloud.callFunction({
+            name: 'updata_adver',
+            data: {
+              new_Adver:newAdver,
+            },
+            success: res => {
+              console.log(res);
+            },
+            fail:res=>{
+              console.log("fali",res);
+            }
+          }); 
+        }).catch(err => {  
+          console.error("An error occurred:", err);  
+        });     
       }
     })
   },

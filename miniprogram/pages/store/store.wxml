@@ -24,7 +24,7 @@
       </view>
       <view class="category-icon" bind:tap="onClickCategoryIcon" data-category="food">
         <view class="t-icon t-icon-food"></view>
-        <view class="">食品</view>
+        <view class="">狗/猫粮</view>
       </view>
       <view class="category-icon" bind:tap="onClickCategoryIcon" data-category="toy">
         <view class="t-icon t-icon-toy"></view>
@@ -36,7 +36,7 @@
       </view>
       <view class="category-icon" bind:tap="onClickCategoryIcon" data-category="medical">
         <view class="t-icon t-icon-medical"></view>
-        <view class="">医疗</view>
+        <view class="">宠物保健</view>
       </view>
       <view class="category-icon" bind:tap="onClickCategoryIcon" data-category="tool">
         <view class="t-icon t-icon-tool"></view>

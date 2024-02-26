@@ -12,6 +12,7 @@ Page({
    */
   data: {
     address:{},
+    is_xian:false,
     defaultAddress:-1,
     AddressIndex: -1, //默认地址
     userAddressList: [], //用户地址列表
@@ -26,7 +27,12 @@ Page({
       AddressIndex:options.id,
       address:app.globalData.userinfo.address,
     });
-    
+    if(this.data.AddressIndex!=-1)
+    {
+      this.setData({
+        is_xian:this.data.address.userAddressList[this.data.AddressIndex].is_xian,
+      })
+    }
   },
 
   /**
@@ -128,7 +134,19 @@ Page({
       chosenRegion: region[1].code
     });
   },
-
+  onDefaultChange_xian_in:function(){
+    if(this.data.is_xian){
+      this.setData({
+        is_xian:false,
+      });
+    }
+    else{
+      this.setData({
+        is_xian:true,
+      });
+    }
+    console.log(this.data.address);
+  },
   //设置默认地址
   onDefaultChange: function() {
     if(this.data.AddressIndex!=this.data.address.defaultAddress){
@@ -179,7 +197,7 @@ Page({
   // 点击保存按钮：保存这次编辑
   onSaveClick: async function(e) {
     var formValue = e.detail.value;
-    console.log(formValue);
+    console.log("formValue",formValue);
     if(formValue.receiver==null){
         wx.showToast({
         title: '请输入姓名',
@@ -202,40 +220,51 @@ Page({
       image:'/images/cw.png',
       });
     return -1;
-  }
-  else if(formValue.address==null){
-    wx.showToast({
-    title: '请输入详细地址',
-    duration: 2000,  
-    image:'/images/cw.png',
-    });
-    return -1;
-  }
-  if(this.data.AddressIndex==-1)
-  {
-    this.data.address.userAddressList.push({
-      receiver:formValue.receiver,
-      phone:formValue.phone,
-      Region:formValue.Region,
-      address:formValue.address,
-    });
-  }
-  if(formValue.default)
-  {
-    if(this.data.AddressIndex==-1)
-      this.setData({
-        'address.defaultAddress' : this.data.address.userAddressList.length-1,
-      });
-  }
-  wx.cloud.callFunction({
-    name: 'updateUserAddress',
-    data: {
-      Address:this.data.address,
-    },
-    success: res => {
-      console.log("修改成功");
     }
-  });
+    else if(formValue.address==null){
+      wx.showToast({
+      title: '请输入详细地址',
+      duration: 2000,  
+      image:'/images/cw.png',
+      });
+      return -1;
+    }
+
+    if(this.data.AddressIndex==-1)
+    {
+      this.data.address.userAddressList.push({
+        receiver:formValue.receiver,
+        phone:formValue.phone,
+        Region:formValue.Region,
+        address:formValue.address,
+        is_xian:formValue.default_is_xian,
+      });
+    }
+    if(this.data.AddressIndex!=-1){
+      var temp = this.data.address.userAddressList[this.data.AddressIndex];
+      temp.receiver=formValue.receiver;
+      temp.phone=formValue.phone;
+      temp.Region=formValue.Region;
+      temp.address=formValue.address;
+      temp.is_xian=formValue.default_is_xian;
+    }
+
+    if(formValue.default)
+    {
+      if(this.data.AddressIndex==-1)
+        this.setData({
+          'address.defaultAddress' : this.data.address.userAddressList.length-1,
+        });
+    }
+    wx.cloud.callFunction({
+      name: 'updateUserAddress',
+      data: {
+        Address:this.data.address,
+      },
+      success: res => {
+        console.log("修改成功");
+      }
+    });
     wx.showToast({
       title: '编辑成功',
       image:'/images/zq.png',

@@ -1,0 +1,51 @@
+<!-- order-details.wxml -->  
+
+<view class="container">  
+ 
+  <view class="card order-header">  
+    <text class="header-title">订单信息</text>  
+    <view class="header-content">  
+      <text class="order-number">订单号: {{order.order_numer}}</text>  
+      <text class="order-date">下单时间: {{order.formatTime}}</text>  
+      <text class="order-status" wx:if="{{order.complete.is_comp}}">订单状态:已送达，送达时间为:{{order.complete.time_comp}}</text>
+      <text class="order-status" wx:if="{{order.complete.is_comp===false}}">订单送达状态:未送达</text> 
+      <text class="order-status" wx:if="{{order.complete.is_detele===false}}">订单存在状态:用户未删除订单</text>
+      <text class="order-status" wx:if="{{order.complete.is_detele===true}}">订单存在状态:用户已经删除订单</text> 
+    </view>  
+  </view>  
+    
+  <view class="card order-items">  
+    <text class="table-header">商品列表</text>  
+    <view class="table-body">  
+      <block wx:for="{{ order.products }}" wx:key="index">
+          <van-card id="{{item.productInfo.id}}" num="{{item.count}}{{item.productInfo.unit}}" price="{{item.productInfo.price}}/{{item.productInfo.unit}}" title="{{item.productInfo.name}}" thumb="{{item.productInfo.min_img}}" />
+        </block>
+    </view>  
+  </view>  
+  <view class="card shipping-info">  
+    <text class="info-title">配送信息</text>  
+    <view class="info-content">  
+      <text class="info-item">配送地址: {{order.Address.Region}}/{{order.Address.address}}</text>  
+      <text class="info-item">电话: {{order.Address.phone}}</text>  
+      <text class="info-item">绑定小程序的电话: {{order.phone}}</text>  
+      <text class="info-item">收货人: {{order.Address.receiver}}</text>  
+    </view>  
+  </view>  
+  <view class="card order-summary">  
+    <text class="summary-title">订单总览</text>  
+    <view class="summary-content">  
+      <text class="summary-item">订单总价: {{order.totalprice}}</text>  
+      <text class="summary-item">运费: {{order.distribution_fee}}</text>  
+      <text class="summary-item">优惠: {{order.discount}}</text>  
+      <text class="summary-item">实付金额: {{order.totalprice+order.distribution_fee}}</text>  
+    </view>  
+  </view>  
+    
+ 
+    
+  <view class="order-actions">  
+    <button class="action-button" bindtap="Receive_goods" wx:if="{{order.complete.is_comp===false}}">确认送达</button>  
+    <button class="action-button" bindtap="detele_order" >删除订单</button>  
+
+  </view>
+</view>

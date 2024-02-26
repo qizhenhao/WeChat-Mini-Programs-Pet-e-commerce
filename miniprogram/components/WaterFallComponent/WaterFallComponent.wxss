@@ -29,7 +29,7 @@
 
 .cards .text {
   display: inline-block;
-  font-size: 12px;
+  font-size: 13px;
   padding: 0 20rpx;
   width: 100%;
 }
@@ -44,4 +44,20 @@
   padding-top: 20rpx;
   font-weight: 600;
   color: #e64340;
+}
+.price {  
+  display: flex;  
+  align-items: center; /* 垂直居中 */  
+}  
+   
+.price_text {  
+  /* 根据需要添加样式，比如字体大小、颜色等 */ 
+  font-size: 14px; 
+  padding-left: 120rpx;
+  color: #e64340; 
+
+}
+.price_text_text{
+  border: 4rpx solid red;  
+  border-radius: 4rpx; 
 }

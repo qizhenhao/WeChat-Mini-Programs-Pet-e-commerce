@@ -1,10 +1,6 @@
 // miniprogram/pages/pay/pay.js
-import Dialog from '@vant/weapp/dialog/dialog';
 import Toast from '@vant/weapp/toast/toast';
-import LevelService from '../../data_service/LevelService.js'
-var levelService = new LevelService();
-import UserService from '../../data_service/UserService.js'
-var userService = new UserService();
+const db = wx.cloud.database()
 Page({
 
   /**
@@ -17,7 +13,13 @@ Page({
     totalPrice: 0, //商品原价合计
     paymentFee: 0, //实际支付价格合计
     discount: 1, //折扣率
-    myInfo: {}, //用户信息
+    user_open_id:'',
+    distribution_fee:0,
+    in_county_chao: 0,
+    in_county_fee: 0,
+    out_county_chao: 0,
+    out_county_fee: 0,
+    zai_fee:0,//满多少元可免配送费
   },
 
   /**
@@ -30,27 +32,81 @@ Page({
     var userinfo = app.globalData.userinfo;
     that.setData({
       chosenAddress : userinfo.address.userAddressList[userinfo.address.defaultAddress],
+      user_open_id : userinfo.openid,
     })
-    levelService.getLevelList(
-      //获取成长体系中的所有成长等级回调函数
-      function(levelList) {
-        var levels = levelList;
-        console.log(levels);
-        userService.getUserInfo(
-          userinfo.openid,
-          //获取用户信息回调函数
-          function(userinfo) {
-            var myInfo = userinfo;
-            that.getDiscount(levels, myInfo);
-            that.setData({
-              myInfo: myInfo
-            })
-          })
-      })
+    var total_price=0;
     var payList = wx.getStorageSync('paylist');
+    console.log(payList);
+    for(let i=0;i<payList.length;i++)
+    {
+      total_price+=payList[i].productInfo.price*payList[i].number;
+    }
+    if(this.data.chosenAddress.is_xian)
+    {
+      db.collection('distribution')
+      .doc("3bbc6ba865d8574000c7014755cfd891")
+      .get({
+        success:res=>{
+          console.log(res);
+          if(total_price<res.data.in_county_chao)
+          {
+            this.setData({
+              distribution_fee:res.data.in_county_fee,
+              totalPrice:total_price,
+              paymentFee:total_price+res.data.in_county_fee,
+              zai_fee:res.data.in_county_chao
+            })
+          }
+          else{
+            this.setData({
+              totalPrice:total_price,
+              paymentFee:total_price,
+            })
+          }
+          this.setData({
+              in_county_chao: res.data.in_county_chao,
+              in_county_fee: res.data.in_county_fee,
+              out_county_chao: res.data.out_county_chao,
+              out_county_fee: res.data.out_county_fee,
+          })
+        }
+      })
+    }
+    else
+    {
+      db.collection('distribution')
+      .doc("3bbc6ba865d8574000c7014755cfd891")
+      .get({
+        success:res=>{
+          console.log(res);
+          if(total_price<res.data.out_county_chao)
+          {
+            this.setData({
+              distribution_fee:res.data.out_county_fee,
+              totalPrice:total_price,
+              paymentFee:total_price+res.data.out_county_fee,
+              zai_fee:res.data.out_county_chao,
+            })  
+          }
+          else{
+            this.setData({
+              totalPrice:total_price,
+              paymentFee:total_price,
+            })
+          }
+          this.setData({
+            in_county_chao: res.data.in_county_chao,
+            in_county_fee: res.data.in_county_fee,
+            out_county_chao: res.data.out_county_chao,
+            out_county_fee: res.data.out_county_fee,
+        })
+        }
+      })
+    }
     this.setData({
       payList: payList,
-      mode: mode
+      mode: mode,
+      
     })
   },
 
@@ -108,47 +164,6 @@ Page({
 
   },
 
-  getDiscount: function(levels, myInfo) {
-    var that = this
-
-    //每个用户等级都有成长值上限和下限，用户的当前总成长值在哪个用户等级的上下限区间内，用户就是该等级
-    var myLevel = levels.filter(e => e.minGrowthValue <= myInfo.growthValue && myInfo.growthValue <= e.maxGrowthValue)[0];
-
-    // //在获取完数据后，显示界面
-    // that.setData({
-    //   discount: myLevel.bonus.descount
-    // })
-    // 获得折扣后再计算价格
-    this.calPrice()
-  },
-
-  /**
-   * 根据用户享受的折扣率计算总价和折扣价
-   */
-  calPrice: function() {
-    //原价合计
-    var totalPrice = 0
-    //实际支付价格合计
-    var paymentFee = 0
-    var payList = wx.getStorageSync('paylist');
-    console.log("calPrice",payList);
-    var discount = this.data.discount
-    //计算合计价格
-    if (payList) {
-      for (var i in payList) {
-        totalPrice += payList[i].productInfo.price * payList[i].number
-      }
-      // 实际支付价格 = 商品原价 * discount
-      paymentFee = totalPrice * discount
-      paymentFee = this.roundFun(paymentFee, 2)
-      //设置商品价格数据
-      this.setData({
-        totalPrice: totalPrice,
-        paymentFee: paymentFee
-      });
-    }
-  },
-
   onChosenButtonClick: function(e) {
     wx.navigateTo({
       url: `../address/my-address/my-address`,
@@ -159,58 +174,81 @@ Page({
   // 提交订单 
   onSummitOrder: async function() {
     var that = this;
-    // 如果用户积分不足，提示并返回
-    if (this.data.myInfo.points < this.data.paymentFee) {
-      this.failToast('很抱歉，你的积分不足，无法购买');
-    } else {
-      var that = this
-      //支付操作，需要弹出确认支付窗口进行二次确认
-      Dialog.confirm({
-        title: '积分支付',
-        message: '你即将支付' + this.data.paymentFee.toString()
-      }).then(() => {
-        // on confirm
-        // 用户确认支付，页面提示支付中
-        wx.showLoading({
-          title: '支付中',
-        })
-        var productsIndex = []
-        for (var i in that.data.payList) {
-          productsIndex.push(that.data.payList[i].id)
+    
+    for (var i in that.data.payList) {
+      db.collection('product')
+      .doc(that.data.payList[i].id)
+      .get()
+      .then(res=>{
+        if(res.data.storage<that.data.payList[i].number)
+        {
+          wx.showToast({
+            title: that.data.payList[i].productInfo.name+'库存量不足，请重新购买',
+            duration:2000,
+            icon:'error'
+          })
+          return;
         }
-        //调用云函数执行购买购物车中所有商品的操作
-        wx.cloud.callFunction({
-          name: 'payProduct',
-          data: {
-            productsIndex: productsIndex,
-            address: this.data.chosenAddress,
-            payList: this.data.payList
+      })
+    }
+    var app = getApp();
+    var userinfo = app.globalData.userinfo;
+    console.log(userinfo);
+    wx.cloud.callFunction({
+      name:"payProduct",
+      data:{
+        user_id : userinfo._id,
+        totalPrice:this.data.paymentFee,
+      },
+      success:res=>{
+        console.log("回调成功",res);
+        var payment = res.result.res.payment;
+        wx.requestPayment({
+          appId:payment.appId,
+          nonceStr: payment.nonceStr,
+          package: payment.package,
+          paySign: payment.paySign,
+          signType:payment.signType,
+          timeStamp: payment.timeStamp,
+          success:ress=>{
+            console.log("支付成功",ress);
+            this.create_order(res.result.res.payment,res.result.order_numer);
+            this.deleteCartStorage(-1);
+            wx.showLoading({
+              title: '加载中',
+              duration:2000,
+              success:res=>{
+                wx.reLaunch({
+                  url: '../store/store',
+                })
+              },
+            })
           },
-          success: async function(res) {
-            //根据云函数返回值，决定显示支付成功、支付失败或其他提示
-            if (res.result.data == true) {
-              Toast.success('支付成功');
-              if (that.data.mode == 'cart') {
-                that.deleteCartStorage(productsIndex)
-              }
-              await that.sleep(2000);
-              wx.navigateBack()
-            } else {
-              that.failToast(res.result.errMsg)
-            }
-          },
-          fail: function(err) {
-            //调用云函数失败，显示支付失败提示界面
-            console.log('onPayButtonClick---err' + JSON.stringify(err) + "\r\n")
-          },
-          complete: function() {
-            wx.hideLoading(); //关闭支付中页面提示
+          fail:res=>{
+            console.log("支付失败",res);
+            wx.showToast({
+              title: '支付失败',
+              icon:'error'
+            })
           }
         })
-      }).catch(() => {
-        // on cancel
-      });
-    }
+        //给商家发送消息
+        // this.create_order(res.result.res.payment,res.result.order_numer);
+        //     this.deleteCartStorage(-1);
+        //     wx.showLoading({
+        //       title: '加载中',
+        //       duration:2000,
+        //       success:res=>{
+        //         wx.reLaunch({
+        //           url: '../store/store',
+        //         })
+        //       },
+        //     })
+      },
+      fail:res=>{
+        console.log("回调失败",res);
+      },
+    })
   },
   // 等待
   sleep: function(ms) {
@@ -227,6 +265,14 @@ Page({
 
   // 删除购物车缓存
   deleteCartStorage: function(productIndex) {
+    if(productIndex==-1)
+    {
+      wx.setStorage({
+        key: 'cart',
+        data: [],
+      })
+      return;
+    }
     var productIndex = productIndex;
     var cart = wx.getStorageSync('cart');
     for (let i = 0; i < productIndex.length; i++) {
@@ -242,8 +288,59 @@ Page({
       data: cart,
     })
   },
-  //保留n位小数
-  roundFun: function (value, n) {
-    return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
+  create_order:function(payment,order_numer){
+    console.log(payment);
+    payment.timeStamp = new Date().getTime();
+    var products = [];
+    for(let i=0;i<this.data.payList.length;i++)
+    {
+      const prolist = this.data.payList[i];
+      products.push({
+        count:prolist.number,
+        productInfo:{
+          id:prolist.id,
+          name: prolist.productInfo.name,
+          price: prolist.productInfo.price,
+          min_img:prolist.productInfo.miniImg,
+          unit:prolist.productInfo.unit,
+        }
+      });
+    }
+    console.log(products);
+    db.collection('order').add({
+      data:{
+        order_numer:order_numer,
+        phone_shang:16627758811,
+        user_id:this.data.user_open_id,
+        payment:payment,
+        distribution_fee:this.data.distribution_fee,
+        Address:this.data.chosenAddress,
+        complete:{
+          is_comp:false,
+          time_comp:'',
+          is_detele:false,
+        },
+        products:products,
+      },
+      success:res=>{
+        for(let i=0;i<this.data.payList.length;i++)
+        {
+          this.data.payList[i].productInfo.storage-=this.data.payList[i].number;
+          wx.cloud.callFunction({
+            name:'mod_product_strage',
+            data:{
+              id:this.data.payList[i].id,
+              storage:this.data.payList[i].productInfo.storage,
+            },
+            success:res=>{
+              console.log(res);
+            },
+            fail:res=>{
+              console.log(res);
+            },
+          })
+        }
+      }
+    })
   },
 })

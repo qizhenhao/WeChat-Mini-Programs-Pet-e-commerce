@@ -1,0 +1,52 @@
+.container {  
+  padding: 20rpx;  
+  background-color: #f9f9f9;  
+  font-size: 30rpx; 
+}  
+  
+.card {  
+  margin-bottom: 20rpx;  
+  padding: 20rpx;  
+  background-color: #fff;  
+  border-radius: 10rpx;  
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);  
+}  
+  
+.header-title, .table-header, .summary-title, .info-title {  
+  font-weight: bold;  
+  font-size: 40rpx;  
+  margin-bottom: 10rpx;  
+}  
+  
+.header-content, .table-body, .summary-content, .info-content {  
+  display: flex;  
+  flex-direction: column; /* 改为垂直排列 */  
+}  
+  
+.table-row {  
+  display: flex;  
+  flex-direction: row;  
+  align-items: center;  
+  margin-bottom: 10rpx;  
+}  
+  
+.table-cell {  
+  flex: 1;  
+  text-align: center;  
+  margin-right: 20rpx;  
+}  
+  
+.summary-item, .info-item {  
+  margin-bottom: 10rpx;  
+}  
+  
+.action-button {  
+  display: block;  
+  width: 100%;  
+  padding: 15rpx;  
+  background-color: #F67879;  
+  color: #fff;  
+  border-radius: 8rpx;  
+  text-align: center;  
+  margin-top: 20rpx;  
+}

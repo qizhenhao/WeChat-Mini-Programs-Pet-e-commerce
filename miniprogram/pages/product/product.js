@@ -13,7 +13,19 @@ Page({
     productNumber: 1, //决定购买的当前商品数
     cartNumber: 0, //购物车商品数
   },
-
+  previewImage: function (e) {
+    var current = e.target.dataset.src;
+    wx.previewImage({ 
+      current: current, // 当前显示图片的http链接  
+      urls: this.data.product.bigImg, // 需要预览的图片http链接列表  
+      success:res=>{
+        console.log(res);
+      },
+      fail:res=>{
+        console.log(res);
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
@@ -118,8 +130,24 @@ Page({
       })
     }
   },
+  onClickStoreIcon:function(){
+      wx.navigateBack({
+      delta: 0,
+      success: (res) => {},
+      fail: (res) => {},
+      complete: (res) => {},
+    });
+  },
   // 点击立即购买按钮
   onClickBuyButton: function() {
+    if(this.data.product.storage<=0)
+    {
+      wx.showToast({
+        title: '已售空',
+        icon:'error',
+      })
+      return;
+    }
     let buyProduct = [{
       id: this.data.productId,
       productInfo: this.data.product,
@@ -136,6 +164,14 @@ Page({
 
   // 点击加入购物车按钮
   onClickAddToCartButton: function() {
+    if(this.data.product.storage<=0)
+    {
+      wx.showToast({
+        title: '已售空',
+        icon:'error',
+      })
+      return;
+    }
     var that = this;
     var value = wx.getStorageSync('cart');
     console.log(value);

@@ -76,6 +76,7 @@ Component({
         leftHeight <= rightHeight ? leftList.push(item) : rightList.push(item); //判断两边高度，来觉得添加到那边
         await this.getBoxHeight(leftList, rightList);
       }
+      console.log(leftList);
     },
 
     getBoxHeight(leftList, rightList) { //获取左右两边高度

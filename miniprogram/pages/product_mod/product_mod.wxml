@@ -1,0 +1,7 @@
+<!--pages/product_mod/product_mod.wxml-->
+<view class="product_mod">
+<van-cell is-link title="添加新商品" link-type="navigateTo" url="../product_mod_add/product_mod_add?id=-1" />
+    <block wx:for="{{ productList }}" wx:key="index">
+      <van-card bind:tap="to_product_mod_add" id="{{item.id}}" num="{{item.storage}}库存" price="{{item.price}}/{{item.unit}}" title="{{item.name}}" thumb="{{item.miniImg}}" />
+    </block>
+</view>

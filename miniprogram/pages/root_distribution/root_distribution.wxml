@@ -1,0 +1,18 @@
+<!--pages/root_distribution/root_distribution.wxml-->
+<view class="product-stepper">
+<text>县城内超过多少无需配送费</text>
+  <van-stepper  name="number" value="{{ in_county_chao }}" bind:change="onNumberChange1" integer min="0" />
+</view>
+<view class="product-stepper">
+  <text>县城内需要多少配送费</text>
+  <van-stepper  name="number" value="{{ in_county_fee }}" bind:change="onNumberChange2" integer min="0" />
+</view>
+<view class="product-stepper">
+  <text>县城外超过多少无需配送费</text>
+  <van-stepper  name="number" value="{{ out_county_chao }}" bind:change="onNumberChange3" integer min="0" />
+</view>
+<view class="product-stepper">
+  <text>县城外需要多少配送费</text>
+  <van-stepper  name="number" value="{{ out_county_fee }}" bind:change="onNumberChange4" integer min="0" />
+</view>
+<button bind:tap="update_distribution">点击保存</button>

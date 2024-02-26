@@ -10,6 +10,32 @@ class ProductService {
     this.listIndex = 0 //分页获取数据的当前页索引
     this.pageCount = 8 //每次分页获取多少数据
   }
+  
+  //上传多张照片
+  update_img(cloudPath,file_list,successback){
+    var code_list = [];
+    var index=0;
+    this.update_img_index(index,cloudPath,file_list,successback,code_list);
+  }
+
+  update_img_index(index,cloudPath,file_list,successback,code_list){
+    if(index===file_list.length)
+      successback(code_list);
+    else{
+      wx.cloud.uploadFile({  
+        cloudPath: "product/"+cloudPath+'/'+cloudPath+index+file_list[index].tempFilePath.match(/\.[^.]+?$/)[0],  
+        filePath: file_list[index].tempFilePath, // 文件路径  
+        success: res => {  
+          code_list.push(res.fileID);
+          this.update_img_index(index+1,cloudPath,file_list,successback,code_list);
+        },  
+        fail:res=>{
+          console.log("失败的",index);
+        }
+      })
+    }
+  }
+  //--------------
   //获取广告
   getadvertising(fun){
     db.collection('advertising')
@@ -25,6 +51,40 @@ class ProductService {
           console.log("fail:Get Advertising");
         },
       })
+  }
+  //添加商品
+  add_product(new_product){
+    db.collection('product').add({
+      data:new_product,
+      success:res=>{
+        console.log(res);
+      },
+    });
+  }
+  //删除商品
+  detele_product(_id){
+    db.collection('product')
+    .doc(_id)
+    .remove()
+    .then(res=>{
+      console.log(res);
+    })
+    .catch(res=>{
+      console.log(res);
+    });
+  }
+  //改变商品信息
+  updata_product(_id,new_product){
+    wx.cloud.callFunction({
+      name: 'updata_product',
+      data:{
+        _id:_id,
+        new_product:new_product
+      },
+      success:res=>{
+        console.log(res);
+      }
+    })
   }
   // 根据商品id获取商品 (callback)
   getProductById(id, successCallback) {
@@ -131,6 +191,7 @@ class ProductService {
               price: res.data[i].price,
               category: res.data[i].category,
               unit: res.data[i].unit,
+              storage:res.data[i].storage,
             });
           }
           //分页显示的页码+1

@@ -1,0 +1,31 @@
+<!--pages/root_order/root_order.wxml-->
+<view class="search-bar">  
+  <input type="search" placeholder="请输入订单号" bindinput="onInput" bindconfirm="onConfirm" />  
+</view>
+<button class="butt" bindtap="shai_wei">只显示未送达的订单</button>
+<button class="butt" bindtap="shai_suo">显示所有订单</button>
+<view class="container">  
+  <view class="order-list">  
+    <block wx:for="{{orders}}" wx:key="index">  
+      <view class="order-item" data-orderid="{{item.order_numer}}" bindtap="navigateToOrderDetails" 
+      wx:if="{{is_wei||(!item.complete.is_comp)}}">  
+        <view class="order-status">  
+          <text class="status-text" wx:if="{{item.complete.is_comp}}">已送达</text>  
+          <text class="status-text" wx:if="{{item.complete.is_comp===false}}">未送达</text>  
+        </view>  
+        <view class="order-info">  
+          <text class="order-id">订单编号: {{item.order_numer}}</text>  
+          <text class="order-date">下单日期: {{item.formatTime}}</text>
+          <text class="order-address">送货地点: {{item.Address.Region}}/{{item.Address.address}}</text> 
+          <text class="order-receiver">收货人: {{item.Address.receiver}}</text> 
+          <text class="order-phone">收货人电话: {{item.Address.phone}}</text>   
+          <text class="order-phone">微信同步电话: {{item.phone}}</text>   
+          <text class="order-total">订单总价: {{item.totalprice}}元</text>  
+        </view>
+        <block wx:for="{{ item.products }}" wx:key="index">
+          <van-card id="{{item.productInfo.id}}" num="{{item.count}}{{item.productInfo.unit}}" price="{{item.productInfo.price}}/{{item.productInfo.unit}}" title="{{item.productInfo.name}}" thumb="{{item.productInfo.min_img}}" />
+        </block>
+      </view>  
+    </block>  
+  </view>  
+</view>

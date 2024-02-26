@@ -1,0 +1,30 @@
+<!--pages/product_mod_add/product_mod_add.wxml-->
+<view class="product_mod_add">
+  <button bindtap="update_minimg">点击上传封面（一张照片）</button>
+  <button bindtap="update_bigimg">点击上传商品图片（最多6张照片）</button>
+  <text class="label">商品名称</text>  
+  <input style="border-color: black; border-style: solid;" class="name_input" placeholder="请输入商品名称" value="{{new_product.name}}" bindinput="nicknameInput" />  
+  <text class="label">商品类别：</text>  
+    <view class="form-group">  
+      <radio-group class="radio-group" bindchange="leibieChange"> 
+        <label class="radio" wx:for="{{categorys}}" wx:key="value">  
+        <text>{{item.name}}</text>
+        <radio value="{{item.name}}" checked="{{item.eng_name===new_product.category}}"/> 
+      </label>
+    </radio-group>  
+  </view> 
+  <text class="label">出售单位</text>  
+  <input style="border-color: black; border-style: solid;" class="name_input" placeholder="请输入单位（如‘斤’，‘个’等）" value="{{new_product.unit}}" bindinput="nickunitInput" />
+  <view class="product-stepper">
+  <text>单价（元）</text>
+    <van-stepper  name="number" value="{{ new_product.price }}" bind:change="onNumberChange_jiage" integer />
+  </view>
+  <view class="product-stepper">
+  <text>库存数</text>
+    <van-stepper  name="number" value="{{ new_product.storage }}" bind:change="onNumberChange_kucun" integer />
+  </view>
+  <text class="label">详细介绍商品用途（选填）</text>  
+  <input style="border-color: black; border-style: solid;" class="name_input" placeholder="商品详情" value="{{new_product.detail}}" bindinput="nickdetailInput" />
+  <button bind:tap="submit">提交商品</button>
+  <button wx:if="{{detele_id}}" bind:tap="detele_product">删除商品</button>
+</view>

@@ -1,6 +1,5 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
-
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV }) // 使用当前云环境
 
 // 云函数入口函数
@@ -38,19 +37,21 @@ exports.main = async (event, context) => {
     })
   }
   else{
-    await db.collection('user')
-    .where({
-      openid: wxContext.OPENID
-    })
-    .update({
-      data: {
-        userNickname:userInfo.userNickname,
-        userAvatarUrl:userInfo.userAvatarUrl,
-        sex:userInfo.sex,
-        birthday:userInfo.birthday,
-        userPhoneInfo:userInfo.userPhoneInfo,
-      }
-    });
+    
+    // 更新用户信息，无论文件上传成功还是失败都执行此操作  
+    const updateResult = await db.collection('user').where({  
+      openid: wxContext.OPENID,  
+    }).update({  
+      data: {  
+        userNickname: userInfo.userNickname,  
+        userAvatarUrl: userInfo.userAvatarUrl, // 使用上传得到的 fileID 或原始头像 URL  
+        sex: userInfo.sex,  
+        birthday: userInfo.birthday,  
+        userPhoneInfo: userInfo.userPhoneInfo,  
+      },  
+    });  
+  
+    // 根据需要返回结果，例如可以返回更新操作的结果或其他相关信息  
+    return { code: 0, message: '用户信息更新成功', updateResult };  
   }
-  return userInfo;
 }

@@ -1,1 +1,47 @@
-/* miniprogram/pages/orders/orders.wxss */
+.container {  
+  padding: 20rpx;  
+}  
+  
+.order-list {  
+  display: flex;  
+  flex-direction: column;  
+}  
+  
+.order-item {  
+  display: flex;  
+  flex-direction: column;  
+  padding: 20rpx;  
+  border-bottom: 1px solid #eee;  
+}  
+  
+.order-status {  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  height: 50rpx;  
+  background-color: #f0f0f0;  
+  margin-bottom: 10rpx;  
+  font-size: 40rpx; /* 增大状态文字的字体大小 */  
+}  
+  
+.status-text {  
+  font-weight: bold;  
+}  
+  
+.order-info {  
+  display: flex;  
+  justify-content: space-between;  
+  font-size: 30rpx; /* 增大订单信息的字体大小 */  
+}  
+  
+.order-info {  
+  display: flex;  
+  flex-direction: column;  
+  padding: 20rpx;  
+}  
+  
+.order-info text {  
+  width: 100%; /* 宽度设置为100%，使文本占据整行 */  
+  display: block; /* 作为块级元素处理，确保占据整行空间 */  
+  margin-bottom: 10rpx; /* 可选：为每行文本之间添加一些间距 */  
+}

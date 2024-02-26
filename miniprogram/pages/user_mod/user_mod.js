@@ -63,7 +63,7 @@ Page({
     });
   },
   //保存
-  submitForm:async function(){
+  submitForm:function(){
     wx.cloud.callFunction({
       name: 'user_mod',
       data: {
@@ -71,18 +71,18 @@ Page({
       },
       success: res => {
         console.log(res);
+        wx.showToast({
+          title: '编辑成功',
+          image:'/images/zq.png',
+        })
+        wx.navigateBack()
+      },
+      fail:res=>{
+        console.log(res);
       }
     });
-    wx.showToast({
-      title: '编辑成功',
-      image:'/images/zq.png',
-    })
-    await this.sleep(2000);
-    wx.navigateBack()
   },
-  sleep: function(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  },
+  
   /**
    * 生命周期函数--监听页面加载
    */
