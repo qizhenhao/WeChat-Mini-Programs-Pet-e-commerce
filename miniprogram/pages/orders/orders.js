@@ -7,6 +7,8 @@ Page({
    */
   data: {
     orders: [],  
+    is_order:true,
+    is_stat:true,
   },
   navigateToOrderDetails: function(event) {  
     var orderId = event.currentTarget.dataset.orderid;  
@@ -35,6 +37,14 @@ Page({
     var order_temp = [];
     var app = getApp();
     var userinfo = app.globalData.userinfo;
+    console.log(userinfo);
+    if(userinfo.openid===undefined)
+    {
+      this.setData({
+        is_stat:false,
+      })
+      return;
+    }
     db.collection('order')
     .where({
       _openid:userinfo.openid,
@@ -53,14 +63,22 @@ Page({
         }
         this.setData({
           orders:order_temp,
-
         });
-        
+        if(this.data.orders.length==0)
+          this.setData({
+            is_order:false,
+            is_stat:true,
+          })
       }
     });
     
   },
-
+  deng_lu:function(){
+    var app = getApp();
+    app.onLaunch();
+    console.log("app()");
+    this.onShow();
+  },
   /**
    * 生命周期函数--监听页面隐藏
    */

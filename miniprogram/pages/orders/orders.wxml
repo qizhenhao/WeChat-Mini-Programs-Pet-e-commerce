@@ -1,6 +1,9 @@
-<!--miniprogram/pages/orders/orders.wxml-->
-{{testtt}}
-<view class="container">  
+<view class="denglu-container" wx:if="{{is_stat===false}}" >  
+  <text class="denglu-text">用户未登录</text>  
+  <button class="denglu-button" bind:tap="deng_lu">点击登录</button>  
+</view>
+<view style="color: slategray; padding-left: 40%; padding-top: 15%;" wx:if="{{is_stat&&is_order===false}}">暂无订单</view>
+<view class="container" wx:if="{{is_stat}}">  
   <view class="order-list">  
     <block wx:for="{{orders}}" wx:key="index">  
       <view class="order-item" data-orderid="{{item.order_numer}}" bindtap="navigateToOrderDetails" wx:if="{{item.complete.is_detele===false}}">  
