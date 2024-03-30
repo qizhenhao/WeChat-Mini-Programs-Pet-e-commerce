@@ -38,9 +38,9 @@ exports.main = async(event, context) => {
     detail:'宠物用品',
     outTradeNo: order_numer,
     spbillCreateIp: "127.0.0.1",
-    subMchId: "1667801236",
+    subMchId: 
     totalFee: event.totalPrice*100,
-    envId: "cloud1-0g0nhwzx2c9a40b4",
+    envId: 
     functionName: "pay_cb",
   });
   return {res:res,order_numer:order_numer};
